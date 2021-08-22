@@ -29,6 +29,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(boost_beast)
 
+# ----- Protobuf ----- #
+find_package(Protobuf REQUIRED)
+
 # ----- GATTLib (for bluetooth on Linux) ----- #
 if (UNIX AND NOT APPLE)
     FetchContent_Declare(
@@ -39,7 +42,7 @@ if (UNIX AND NOT APPLE)
     FetchContent_MakeAvailable(gattlib)
 endif ()
 
-add_executable(ProjectGanymedeServer src/main.cpp)
+add_executable(ProjectGanymedeServer src/CameraController.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
     target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} ${Boost_LIBRARIES} gattlib)
