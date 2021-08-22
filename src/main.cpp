@@ -2,7 +2,7 @@
 #include <gphoto2/gphoto2-camera.h>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, World! 12345" << std::endl;
 
     Camera *camera;
     return gp_camera_new(&camera);
