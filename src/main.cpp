@@ -1,6 +1,9 @@
 #include <iostream>
+#include <gphoto2/gphoto2-camera.h>
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    return 0;
+
+    Camera *camera;
+    return gp_camera_new(&camera);
 }

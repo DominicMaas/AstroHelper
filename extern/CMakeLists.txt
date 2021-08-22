@@ -1,18 +1,7 @@
-cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.20)
 
-#include(FetchContent)
-
-#FetchContent_Declare(
-#        extern_gattlib#
-
-       # GIT_REPOSITORY https://github.com/labapart/gattlib
-       # GIT_TAG        dev)
-
-#FetchContent_GetProperties(extern_gattlib)
-#if(NOT extern_gattlib_POPULATED)
-#    FetchContent_Populate(extern_gattlib)
-#    add_subdirectory(
-#            ${extern_gattlib_SOURCE_DIR}
-#            ${extern_gattlib_BINARY_DIR}
-#            EXCLUDE_FROM_ALL)
-#endif()
+# ----- GPhoto2 (more specifically libgphoto2) ----- #
+find_package(Gphoto2 REQUIRED)
+include_directories(${Gphoto2_INCLUDE_DIRS})
+list(APPEND LIBS ${Gphoto2_LIBRARIES})
+add_definitions(${Gphoto2_DEFINITIONS})
