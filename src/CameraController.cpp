@@ -6,10 +6,10 @@
 
 bool CameraController::connect() {
     int res = gp_camera_new(&_camera);
-    printf("gp_camera_new returned %i", res);
+    std::cout << "gp_camera_new returned " << res << std::endl;
 
     if (res == 0) {
-        printf("gp_camera_new returned 0");
+        std::cout << "Failed to connect to camera!" << std::endl;
         return false;
     }
 
@@ -18,6 +18,6 @@ bool CameraController::connect() {
     CameraText camText;
     gp_camera_get_about(_camera, &camText, context);
 
-    printf("Camera Text: %s", camText.text);
+    std::cout << "Camera Text: " << camText.text << std::endl;
     return true;
 }

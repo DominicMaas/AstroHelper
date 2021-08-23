@@ -10,6 +10,5 @@ int main() {
     CameraController c;
     c.connect();
 
-    Camera *camera;
-    return gp_camera_new(&camera);
+    return 0;
 }

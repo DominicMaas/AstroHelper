@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdio>
+#include <iostream>
 #include <gphoto2/gphoto2-camera.h>
 
 
