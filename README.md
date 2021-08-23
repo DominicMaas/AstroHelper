@@ -7,19 +7,20 @@ cameras remotely via other devices (such as a mobile phone)
 
 This project has been developed on macOS and Linux. Windows is not supported. BLE is only supported on Linux.
 
-## libgphoto2
+## macOS Dependencies
 
-_Access camera functionality over USB connection_
+- `brew install libgphoto2`
+- `brew install boost`
+- `brew install protobuf`
 
-- **macOS:** `brew install libgphoto2`
-- **Linux:** `apt-get install libgphoto2-dev`
-
-## boost 1.76
-
-_Required for Boost Beast (HTTP Server)_
-
-- **macOS:** `brew install boost`
-- **Linux:** `apt-get install boost`
+## Linux Dependencies
+- `apt install libgphoto2-dev`
+- `apt install libboost-all-dev`
+- `apt install protobuf-compiler`
+- `apt install pi-bluetooth`
+- `apt install libbluetooth-dev`
+- `apt install libglib2.0-dev`
+- `apt install libssl-dev`
 
 # Structure 
 
