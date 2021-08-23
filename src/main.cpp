@@ -10,5 +10,7 @@ int main() {
     CameraController c;
     c.connect();
 
+    c.get_config_item("/main/capturesettings/applicationmode");
+
     return 0;
 }
