@@ -6,6 +6,8 @@
 
 bool CameraController::connect() {
     int res = gp_camera_new(&_camera);
+    printf("gp_camera_new returned %i", res);
+
     if (res == 0) {
         printf("gp_camera_new returned 0");
         return false;
