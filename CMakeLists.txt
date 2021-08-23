@@ -25,6 +25,8 @@ find_package(Protobuf REQUIRED)
 
 # ----- GATTLib (for bluetooth on Linux) ----- #
 if (UNIX AND NOT APPLE)
+    SET(GATTLIB_BUILD_DOCS OFF)
+
     FetchContent_Declare(
             gattlib
             GIT_REPOSITORY "https://github.com/labapart/gattlib"

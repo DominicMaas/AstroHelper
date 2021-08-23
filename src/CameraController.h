@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstdio>
 #include <gphoto2/gphoto2-camera.h>
+
 
 class CameraController {
 private:

@@ -5,10 +5,17 @@
 #include "CameraController.h"
 
 bool CameraController::connect() {
-    auto res = gp_camera_new(&_camera);
+    int res = gp_camera_new(&_camera);
     if (res == 0) {
+        printf("gp_camera_new returned 0");
         return false;
     }
 
+    GPContext *context = gp_context_new();
+
+    CameraText camText;
+    gp_camera_get_about(_camera, &camText, context);
+
+    printf("Camera Text: %s", camText.text);
     return true;
 }
