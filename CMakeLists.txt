@@ -20,6 +20,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(httplib)
 
+# ----- cpp-httplib ----- #
+FetchContent_Declare(
+        fmt
+        GIT_REPOSITORY "https://github.com/fmtlib/fmt"
+        GIT_TAG "d141cdbeb0fb422a3fb7173b285fd38e0d1772dc"
+)
+FetchContent_MakeAvailable(fmt)
+
 # ----- Protobuf ----- #
 find_package(Protobuf REQUIRED)
 
@@ -38,7 +46,7 @@ endif ()
 add_executable(ProjectGanymedeServer src/CameraController.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib gattlib)
+    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib fmt gattlib)
 else()
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib)
+    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib fmt)
 endif()
