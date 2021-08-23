@@ -10,12 +10,10 @@ This project has been developed on macOS and Linux. Windows is not supported. BL
 ## macOS Dependencies
 
 - `brew install libgphoto2`
-- `brew install boost`
 - `brew install protobuf`
 
 ## Linux Dependencies
 - `apt install libgphoto2-dev`
-- `apt install libboost-all-dev`
 - `apt install protobuf-compiler`
 - `apt install pi-bluetooth`
 - `apt install libbluetooth-dev`

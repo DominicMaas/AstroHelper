@@ -2,6 +2,8 @@
 #include <gphoto2/gphoto2-camera.h>
 #include "CameraController.h"
 
+#include <httplib.h>
+
 int main() {
     std::cout << "Hello, World! 12345" << std::endl;
 

@@ -12,22 +12,13 @@ include_directories(${Gphoto2_INCLUDE_DIRS})
 list(APPEND LIBS ${Gphoto2_LIBRARIES})
 add_definitions(${Gphoto2_DEFINITIONS})
 
-# ----- Boost ----- #
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
-
-# ----- Boost Beast HTTP Server ----- #
+# ----- cpp-httplib ----- #
 FetchContent_Declare(
-        boost_beast
-        GIT_REPOSITORY "https://github.com/boostorg/beast"
-        GIT_TAG "b7344b0d501f23f763a76488826dde8c31f34b5d" # 1.76
+        httplib
+        GIT_REPOSITORY "https://github.com/yhirose/cpp-httplib"
+        GIT_TAG "429750092850b18abeccb7bd390e9fb88baf2b1b"
 )
-FetchContent_MakeAvailable(boost_beast)
+FetchContent_MakeAvailable(httplib)
 
 # ----- Protobuf ----- #
 find_package(Protobuf REQUIRED)
@@ -45,7 +36,7 @@ endif ()
 add_executable(ProjectGanymedeServer src/CameraController.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} ${Boost_LIBRARIES} gattlib)
+    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib gattlib)
 else()
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib)
 endif()
