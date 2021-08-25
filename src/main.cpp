@@ -1,16 +1,17 @@
 #include <iostream>
-#include <gphoto2/gphoto2-camera.h>
-#include "CameraController.h"
-
-#include <httplib.h>
+#include "camera_controller.h"
+#include "backends/http.h"
 
 int main() {
-    std::cout << "Hello, World! 12345" << std::endl;
+    // Controller to access camera
+    auto controller = new CameraController();
+    controller->connect();
 
-    CameraController c;
-    c.connect();
+    // HTTP Server
+    HTTP http(controller);
+    http.listen();
 
-    c.get_config_item("/main/capturesettings/applicationmode");
-
+    controller->disconnect();
+    delete controller;
     return 0;
 }

@@ -43,7 +43,7 @@ if (UNIX AND NOT APPLE)
     FetchContent_MakeAvailable(gattlib)
 endif ()
 
-add_executable(ProjectGanymedeServer src/CameraController.cpp src/main.cpp)
+add_executable(ProjectGanymedeServer src/camera_controller.cpp src/backends/http.cpp src/backends/ble.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
     target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib fmt gattlib)

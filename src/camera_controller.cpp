@@ -1,8 +1,4 @@
-//
-// Created by Dominic Maas on 23/08/21.
-//
-
-#include "CameraController.h"
+#include "camera_controller.h"
 
 ControllerResponse CameraController::connect() {
     // TODO: What happens if connect is called twice? Clean up old resources
@@ -120,6 +116,14 @@ GetConfigResponse CameraController::get_config_item(const char *name) {
     fmt::print("Retrieved config value of {}!\n", value);
 
     return GetConfigResponse{.value = value};
+}
+
+ControllerResponse CameraController::capture_preview() {
+    return ControllerResponse{};
+}
+
+ControllerResponse CameraController::capture_image() {
+    return ControllerResponse{};
 }
 
 

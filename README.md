@@ -28,3 +28,10 @@ and expose output data in form of protobuf objects.
 
 The BLE Server and HTTP Server then abstract over this `CameraController` class exposing the methods as endpoints that can 
 be accessed remotely.
+
+# Tasks
+
+- [ ] Replicate old ganymede server functionality (backend and web server) to match old feature set
+- [ ] Port ganymeded react frontend to the new server. Merge repos together deleting the old python server
+- [ ] Create a Flutter app which talks to the server via HTTP
+- [ ] Implement the BLE server within the controller, and BLE client within the app

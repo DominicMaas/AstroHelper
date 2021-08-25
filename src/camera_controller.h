@@ -22,8 +22,14 @@ private:
 
 public:
     ControllerResponse connect();
+
     ControllerResponse disconnect();
 
     ControllerResponse set_config_item(const char *name, const void *value);
+
     GetConfigResponse get_config_item(const char *name);
+
+    ControllerResponse capture_preview();
+
+    ControllerResponse capture_image();
 };
