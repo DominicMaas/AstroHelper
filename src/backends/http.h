@@ -1,6 +1,7 @@
 #pragma once
 
 #include <httplib.h>
+#include <nlohmann/json.hpp>
 #include "../camera_controller.h"
 
 class HTTP {

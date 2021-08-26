@@ -10,8 +10,11 @@ HTTP::HTTP(CameraController *controller) {
         auto response = this->_controller->get_config_item(configName);
 
         if (response.successful) {
-            // TODO
-            res.set_content("Success!", "text/plain");
+            nlohmann::json j;
+            j["value"] = response.value;
+            j["choices"] = response.values;
+
+            res.set_content(j.dump(), "application/json");
         } else {
             res.status = 500;
             res.set_content(response.message, "text/plain");

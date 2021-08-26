@@ -23,13 +23,20 @@ FetchContent_MakeAvailable(httplib)
 # ----- cpp-httplib ----- #
 FetchContent_Declare(
         fmt
-        GIT_REPOSITORY "https://github.com/fmtlib/fmt"
-        GIT_TAG "d141cdbeb0fb422a3fb7173b285fd38e0d1772dc"
-)
+        GIT_REPOSITORY https://github.com/fmtlib/fmt
+        GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc)
 FetchContent_MakeAvailable(fmt)
 
-# ----- Protobuf ----- #
-find_package(Protobuf REQUIRED)
+# ----- JSON ----- #
+FetchContent_Declare(json
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent.git
+        GIT_TAG v3.10.0)
+
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # ----- GATTLib (for bluetooth on Linux) ----- #
 if (UNIX AND NOT APPLE)
@@ -37,16 +44,15 @@ if (UNIX AND NOT APPLE)
 
     FetchContent_Declare(
             gattlib
-            GIT_REPOSITORY "https://github.com/labapart/gattlib"
-            GIT_TAG "db44d7a99df3e7f71fb71b9431df6201a92d9edf"
-    )
+            GIT_REPOSITORY https://github.com/labapart/gattlib
+            GIT_TAG db44d7a99df3e7f71fb71b9431df6201a92d9edf)
     FetchContent_MakeAvailable(gattlib)
 endif ()
 
 add_executable(ProjectGanymedeServer src/camera_controller.cpp src/backends/http.cpp src/backends/ble.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib fmt gattlib)
+    target_link_libraries(ProjectGanymedeServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt gattlib)
 else()
-    target_link_libraries(ProjectGanymedeServer ${Gphoto2_LIBRARIES} httplib fmt)
+    target_link_libraries(ProjectGanymedeServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt)
 endif()

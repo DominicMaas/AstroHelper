@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <fmt/core.h>
 #include <gphoto2/gphoto2-camera.h>
 #include <gphoto2/gphoto2-result.h>
@@ -11,8 +12,8 @@ struct ControllerResponse {
 };
 
 struct GetConfigResponse : ControllerResponse {
-    const void *value = nullptr;
-    const void **values = nullptr;
+    std::string value;
+    std::vector<std::string> values;
 };
 
 class CameraController {

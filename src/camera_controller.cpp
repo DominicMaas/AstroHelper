@@ -25,11 +25,11 @@ ControllerResponse CameraController::disconnect() {
     return ControllerResponse{};
 }
 
-ControllerResponse CameraController::set_config_item(const std::string& name, const void *value) {
+ControllerResponse CameraController::set_config_item(const std::string &name, const void *value) {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
-        return ControllerResponse { false, conn_response.message };
+        return ControllerResponse{false, conn_response.message};
     }
 
     // Keep track of return codes
@@ -87,11 +87,11 @@ ControllerResponse CameraController::set_config_item(const std::string& name, co
     return ControllerResponse{};
 }
 
-GetConfigResponse CameraController::get_config_item(const std::string& name) {
+GetConfigResponse CameraController::get_config_item(const std::string &name) {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
-        return GetConfigResponse { false, conn_response.message };
+        return GetConfigResponse{false, conn_response.message};
     }
 
     // Keep track of return codes
@@ -122,8 +122,8 @@ GetConfigResponse CameraController::get_config_item(const std::string& name) {
         return GetConfigResponse{false, message};
     }
 
-    void *value;
-    res = gp_widget_get_value(widget, &value);
+    void *raw_val;
+    res = gp_widget_get_value(widget, &raw_val);
     if (res != 0) {
         auto message = fmt::format("Unable to get specified camera config value ({}). Result: {}", name,
                                    gp_result_as_string(res));
@@ -134,17 +134,27 @@ GetConfigResponse CameraController::get_config_item(const std::string& name) {
         return GetConfigResponse{false, message};
     }
 
-    fmt::print("Retrieved config value of {}!\n", value);
+    auto values = std::vector<std::string>();
+    auto value = *static_cast<std::string *>(raw_val);
+
+    auto choice_count = gp_widget_count_choices(widget);
+    for (int i = 0; i < choice_count; i++) {
+        const char *choice;
+        gp_widget_get_choice(widget, i, &choice);
+        values.emplace_back(choice);
+    }
+
+    fmt::print("Retrieved config value of {}! (alongside {} choices)\n", value, choice_count);
 
     this->disconnect();
-    return GetConfigResponse{.value = value};
+    return GetConfigResponse{.value = value, .values = values};
 }
 
 ControllerResponse CameraController::capture_preview() {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
-        return ControllerResponse { false, conn_response.message };
+        return ControllerResponse{false, conn_response.message};
     }
 
     this->disconnect();
@@ -155,7 +165,7 @@ ControllerResponse CameraController::capture_image() {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
-        return ControllerResponse { false, conn_response.message };
+        return ControllerResponse{false, conn_response.message};
     }
 
     this->disconnect();
