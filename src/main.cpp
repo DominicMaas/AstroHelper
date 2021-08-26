@@ -5,13 +5,12 @@
 int main() {
     // Controller to access camera
     auto controller = new CameraController();
-    controller->connect();
 
     // HTTP Server
     HTTP http(controller);
     http.listen();
 
-    controller->disconnect();
+    // Finish up
     delete controller;
     return 0;
 }

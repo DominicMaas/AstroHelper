@@ -25,9 +25,9 @@ public:
 
     ControllerResponse disconnect();
 
-    ControllerResponse set_config_item(const char *name, const void *value);
+    ControllerResponse set_config_item(const std::string& name, const void *value);
 
-    GetConfigResponse get_config_item(const char *name);
+    GetConfigResponse get_config_item(const std::string& name);
 
     ControllerResponse capture_preview();
 

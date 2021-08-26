@@ -1,8 +1,6 @@
 #include "camera_controller.h"
 
 ControllerResponse CameraController::connect() {
-    // TODO: What happens if connect is called twice? Clean up old resources
-
     // Required context and camera init
     this->_context = gp_context_new();
 
@@ -16,10 +14,6 @@ ControllerResponse CameraController::connect() {
         return ControllerResponse{false, message};
     }
 
-    CameraText cam_text;
-    gp_camera_get_about(this->_camera, &cam_text, this->_context);
-
-    std::cout << "Camera Text: " << cam_text.text << std::endl;
     return ControllerResponse{};
 }
 
@@ -31,7 +25,13 @@ ControllerResponse CameraController::disconnect() {
     return ControllerResponse{};
 }
 
-ControllerResponse CameraController::set_config_item(const char *name, const void *value) {
+ControllerResponse CameraController::set_config_item(const std::string& name, const void *value) {
+    // Start of method, connect
+    auto conn_response = this->connect();
+    if (!conn_response.successful) {
+        return ControllerResponse { false, conn_response.message };
+    }
+
     // Keep track of return codes
     int res;
 
@@ -42,17 +42,21 @@ ControllerResponse CameraController::set_config_item(const char *name, const voi
         auto message = fmt::format("Unable to get camera config. Result: {}", gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return ControllerResponse{false, message};
     }
 
     // Get the widget
     CameraWidget *widget;
-    res = gp_widget_get_child_by_name(config, name, &widget);
+    res = gp_widget_get_child_by_name(config, name.c_str(), &widget);
     if (res != 0) {
         auto message = fmt::format("Unable to get specified camera config ({}). Result: {}", name,
                                    gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return ControllerResponse{false, message};
     }
 
@@ -63,6 +67,8 @@ ControllerResponse CameraController::set_config_item(const char *name, const voi
                                    gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return ControllerResponse{false, message};
     }
 
@@ -72,13 +78,22 @@ ControllerResponse CameraController::set_config_item(const char *name, const voi
         auto message = fmt::format("Unable to set camera config. Result: {}", gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return ControllerResponse{false, message};
     }
 
+    this->disconnect();
     return ControllerResponse{};
 }
 
-GetConfigResponse CameraController::get_config_item(const char *name) {
+GetConfigResponse CameraController::get_config_item(const std::string& name) {
+    // Start of method, connect
+    auto conn_response = this->connect();
+    if (!conn_response.successful) {
+        return GetConfigResponse { false, conn_response.message };
+    }
+
     // Keep track of return codes
     int res;
 
@@ -89,17 +104,21 @@ GetConfigResponse CameraController::get_config_item(const char *name) {
         auto message = fmt::format("Unable to get camera config. Result: {}", gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return GetConfigResponse{false, message};
     }
 
     // Get the widget
     CameraWidget *widget;
-    res = gp_widget_get_child_by_name(config, name, &widget);
+    res = gp_widget_get_child_by_name(config, name.c_str(), &widget);
     if (res != 0) {
         auto message = fmt::format("Unable to get specified camera config ({}). Result: {}", name,
                                    gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return GetConfigResponse{false, message};
     }
 
@@ -110,19 +129,36 @@ GetConfigResponse CameraController::get_config_item(const char *name) {
                                    gp_result_as_string(res));
 
         fmt::print("{}\n", message);
+
+        this->disconnect();
         return GetConfigResponse{false, message};
     }
 
     fmt::print("Retrieved config value of {}!\n", value);
 
+    this->disconnect();
     return GetConfigResponse{.value = value};
 }
 
 ControllerResponse CameraController::capture_preview() {
+    // Start of method, connect
+    auto conn_response = this->connect();
+    if (!conn_response.successful) {
+        return ControllerResponse { false, conn_response.message };
+    }
+
+    this->disconnect();
     return ControllerResponse{};
 }
 
 ControllerResponse CameraController::capture_image() {
+    // Start of method, connect
+    auto conn_response = this->connect();
+    if (!conn_response.successful) {
+        return ControllerResponse { false, conn_response.message };
+    }
+
+    this->disconnect();
     return ControllerResponse{};
 }
 
