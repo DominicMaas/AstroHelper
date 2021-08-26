@@ -134,10 +134,9 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
-    fmt::print("Got value, attempting to convert into string...\n");
-
+    fmt::print("Creating vector of strings...\n");
     auto values = std::vector<std::string>();
-
+    fmt::print("Created!!!\n");
     fmt::print("Value is {}! Now attempting to extract choices...\n", value);
 
     auto choice_count = gp_widget_count_choices(widget);
