@@ -122,8 +122,8 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
-    void *raw_val;
-    res = gp_widget_get_value(widget, &raw_val);
+    const char *value;
+    res = gp_widget_get_value(widget, &value);
     if (res != 0) {
         auto message = fmt::format("Unable to get specified camera config value ({}). Result: {}", name,
                                    gp_result_as_string(res));
@@ -137,16 +137,15 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     fmt::print("Got value, attempting to convert into string...\n");
 
     auto values = std::vector<std::string>();
-    auto value = *static_cast<std::string *>(raw_val);
 
     fmt::print("Value is {}! Now attempting to extract choices...\n", value);
 
     auto choice_count = gp_widget_count_choices(widget);
     for (int i = 0; i < choice_count; i++) {
         fmt::print("Attempting to extract choice {}!\n", i);
-        const char *choice;
-        gp_widget_get_choice(widget, i, &choice);
-        values.emplace_back(choice);
+        const char *raw_choice;
+        gp_widget_get_choice(widget, i, &raw_choice);
+        values.emplace_back(raw_choice);
     }
 
     fmt::print("Retrieved config value of {}! (alongside {} choices)\n", value, choice_count);
