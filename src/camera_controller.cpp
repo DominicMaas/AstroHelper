@@ -134,12 +134,9 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
-    fmt::print("Creating vector of strings...\n");
     auto values = std::vector<std::string>();
-    fmt::print("Created!!!\n");
-    fmt::print("Value is {}! Now attempting to extract choices...\n", value);
-
     auto choice_count = gp_widget_count_choices(widget);
+
     for (int i = 0; i < choice_count; i++) {
         fmt::print("Attempting to extract choice {}!\n", i);
         const char *raw_choice;
@@ -147,6 +144,7 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         values.emplace_back(raw_choice);
     }
 
+    fmt::print("Extracted Values (maybe printing is causing issues?)!!!\n");
     fmt::print("Retrieved config value of {}! (alongside {} choices)\n", value, choice_count);
 
     this->disconnect();
