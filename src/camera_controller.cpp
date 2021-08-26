@@ -134,11 +134,16 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
+    fmt::print("Got value, attempting to convert into string...\n");
+
     auto values = std::vector<std::string>();
     auto value = *static_cast<std::string *>(raw_val);
 
+    fmt::print("Value is {}! Now attempting to extract choices...\n", value);
+
     auto choice_count = gp_widget_count_choices(widget);
     for (int i = 0; i < choice_count; i++) {
+        fmt::print("Attempting to extract choice {}!\n", i);
         const char *choice;
         gp_widget_get_choice(widget, i, &choice);
         values.emplace_back(choice);
