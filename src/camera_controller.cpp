@@ -122,8 +122,48 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
-    const char *value;
-    res = gp_widget_get_value(widget, &value);
+    // Where we will eventually store the value
+    std::string value;
+
+    // Extract the type
+    CameraWidgetType type;
+    gp_widget_get_type(widget, &type);
+    fmt::print("Type is {}\n", type);
+
+    // Extract depending on teh type
+    switch (type) {
+        case CameraWidgetType::GP_WIDGET_RANGE: // FLOAT
+            const float *raw_float;
+            res = gp_widget_get_value(widget, &raw_float);
+            if (res != 0) {
+                break;
+            }
+
+            value = std::to_string(*raw_float);
+            break;
+
+        case CameraWidgetType::GP_WIDGET_TOGGLE: // INT
+        case CameraWidgetType::GP_WIDGET_DATE:   // INT
+            const int *raw_int;
+            res = gp_widget_get_value(widget, &raw_int);
+            if (res != 0) {
+                break;
+            }
+
+            value = std::to_string(*raw_int);
+            break;
+
+        default: // STRING
+            const char *raw_str;
+            res = gp_widget_get_value(widget, &raw_str);
+            if (res != 0) {
+                break;
+            }
+
+            value = raw_str;
+            break;
+    }
+
     if (res != 0) {
         auto message = fmt::format("Unable to get specified camera config value ({}). Result: {}", name,
                                    gp_result_as_string(res));
@@ -134,20 +174,17 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
         return GetConfigResponse{false, message};
     }
 
-    CameraWidgetType type;
-    gp_widget_get_type(widget, &type);
-
-    fmt::print("Type is {}\n", type);
-
     auto values = std::vector<std::string>();
     auto choice_count = gp_widget_count_choices(widget);
 
-    fmt::print("Choice count is {}\n", choice_count);
+    // Assume choices are strings
+    if (choice_count > 0) {
+        for (int i = 0; i < choice_count; i++) {
+            const char *raw_choice;
+            gp_widget_get_choice(widget, i, &raw_choice);
 
-    for (int i = 0; i < choice_count; i++) {
-        const char *raw_choice;
-        gp_widget_get_choice(widget, i, &raw_choice);
-        values.emplace_back(raw_choice);
+            values.emplace_back(raw_choice);
+        }
     }
 
     this->disconnect();
