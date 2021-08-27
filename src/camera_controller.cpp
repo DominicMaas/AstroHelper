@@ -25,7 +25,7 @@ ControllerResponse CameraController::disconnect() {
     return ControllerResponse{};
 }
 
-ControllerResponse CameraController::set_config_item(const std::string &name, const void *value) {
+ControllerResponse CameraController::set_config_item(const std::string &name, const std::string &value) {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
@@ -60,8 +60,48 @@ ControllerResponse CameraController::set_config_item(const std::string &name, co
         return ControllerResponse{false, message};
     }
 
+    // Extract the type
+    CameraWidgetType type;
+    gp_widget_get_type(widget, &type);
+
+    // Extract if readonly
+    int read_only;
+    gp_widget_get_readonly(widget, &read_only);
+
+    // Cannot modify readonly
+    if (read_only == 1) {
+        auto message = fmt::format("Unable to get specified camera config ({}). Result: This config is readonly!",
+                                   name);
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return ControllerResponse{false, message};
+    }
+
     // Attempt to set the value
-    res = gp_widget_set_value(widget, value);
+    switch (type) {
+        case CameraWidgetType::GP_WIDGET_RANGE: // FLOAT
+        {
+            float f = std::stof(value);
+            res = gp_widget_set_value(widget, &f);
+            break;
+        }
+
+        case CameraWidgetType::GP_WIDGET_TOGGLE: // INT
+        case CameraWidgetType::GP_WIDGET_DATE:   // INT
+        {
+            int i = std::stoi(value);
+            res = gp_widget_set_value(widget, &i);
+            break;
+        }
+
+        default: // STRING
+            res = gp_widget_set_value(widget, value.c_str());
+            break;
+    }
+
+    // Handle set response
     if (res != 0) {
         auto message = fmt::format("Unable to set camera config ({}) value. Result: {}", name,
                                    gp_result_as_string(res));
@@ -128,9 +168,12 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     // Extract the type
     CameraWidgetType type;
     gp_widget_get_type(widget, &type);
-    fmt::print("Type is {}\n", type);
 
-    // Extract depending on teh type
+    // Extract if readonly
+    int read_only;
+    gp_widget_get_readonly(widget, &read_only);
+
+    // Extract depending on the type
     switch (type) {
         case CameraWidgetType::GP_WIDGET_RANGE: // FLOAT
             float raw_float;
@@ -188,7 +231,7 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     }
 
     this->disconnect();
-    return GetConfigResponse{.value = value, .values = values};
+    return GetConfigResponse{.value = value, .values = values, .read_only = read_only == 1};
 }
 
 ControllerResponse CameraController::capture_preview() {

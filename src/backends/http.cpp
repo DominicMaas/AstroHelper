@@ -13,6 +13,7 @@ HTTP::HTTP(CameraController *controller) {
             nlohmann::json j;
             j["value"] = response.value;
             j["choices"] = response.values;
+            j["read_only"] = response.read_only;
 
             res.set_content(j.dump(), "application/json");
         } else {
@@ -21,12 +22,12 @@ HTTP::HTTP(CameraController *controller) {
         }
     });
 
-    this->_server.Get("/set-config-item/", [this](const httplib::Request &req, httplib::Response &res) {
+    this->_server.Get("/set-config-item/(.+)", [this](const httplib::Request &req, httplib::Response &res) {
+        // Extract name and try extract config
         auto configName = req.matches[1].str();
-        auto response = this->_controller->set_config_item(configName, req.body.c_str());
+        auto response = this->_controller->set_config_item(configName, req.body);
 
         if (response.successful) {
-            // TODO
             res.set_content("Success!", "text/plain");
         } else {
             res.status = 500;

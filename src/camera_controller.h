@@ -14,6 +14,7 @@ struct ControllerResponse {
 struct GetConfigResponse : ControllerResponse {
     std::string value;
     std::vector<std::string> values;
+    bool read_only;
 };
 
 class CameraController {
@@ -26,7 +27,7 @@ public:
 
     ControllerResponse disconnect();
 
-    ControllerResponse set_config_item(const std::string& name, const void *value);
+    ControllerResponse set_config_item(const std::string& name, const std::string &value);
 
     GetConfigResponse get_config_item(const std::string& name);
 
