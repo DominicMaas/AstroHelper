@@ -137,12 +137,12 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     CameraWidgetType type;
     gp_widget_get_type(widget, &type);
 
-    fmt::print("Type is {}", type);
+    fmt::print("Type is {}\n", type);
 
     auto values = std::vector<std::string>();
     auto choice_count = gp_widget_count_choices(widget);
 
-    fmt::print("Choice count is {}", choice_count);
+    fmt::print("Choice count is {}\n", choice_count);
 
     for (int i = 0; i < choice_count; i++) {
         const char *raw_choice;
