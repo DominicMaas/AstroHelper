@@ -234,15 +234,119 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     return GetConfigResponse{.value = value, .values = values, .read_only = read_only == 1};
 }
 
-ControllerResponse CameraController::capture_preview() {
+CameraPreviewResponse CameraController::capture_preview() {
     // Start of method, connect
     auto conn_response = this->connect();
     if (!conn_response.successful) {
-        return ControllerResponse{false, conn_response.message};
+        return CameraPreviewResponse{false, conn_response.message};
+    }
+
+    // Keep track of return codes
+    int res;
+
+    // Get the config
+    CameraWidget *config;
+    res = gp_camera_get_config(this->_camera, &config, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to get camera config. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Get the widgets
+    auto capture_target_widget_res = this->get_config_internal(config, "capturetarget");
+    if (!capture_target_widget_res.successful) {
+        return CameraPreviewResponse{capture_target_widget_res.successful, capture_target_widget_res.message};
+    }
+
+    auto view_finder_widget_res = this->get_config_internal(config, "viewfinder");
+    if (!view_finder_widget_res.successful) {
+        return CameraPreviewResponse{view_finder_widget_res.successful, view_finder_widget_res.message};
+    }
+
+    auto image_quality_widget_res = this->get_config_internal(config, "imagequality");
+    if (!image_quality_widget_res.successful) {
+        return CameraPreviewResponse{image_quality_widget_res.successful, image_quality_widget_res.message};
+    }
+
+    // Set the Capture Target to 'Internal RAM'
+    res = gp_widget_set_value(capture_target_widget_res.widget, "Internal RAM");
+    if (res != 0) {
+        auto message = fmt::format("Could not set the capture target to Internal RAM");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Set the view finder to 0
+    res = gp_widget_set_value(view_finder_widget_res.widget, 0);
+    if (res != 0) {
+        auto message = fmt::format("Could not set the view finder to 0");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Set the image format to 'JPEG Normal'
+    res = gp_widget_set_value(image_quality_widget_res.widget, "JPEG Normal");
+    if (res != 0) {
+        auto message = fmt::format("Could not set the image quality to JPEG Normal");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Attempt to set the config
+    res = gp_camera_set_config(this->_camera, config, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to set camera config. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    CameraFilePath filePath;
+    res = gp_camera_capture(this->_camera, CameraCaptureType::GP_CAPTURE_IMAGE, &filePath, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to capture image (GP_CAPTURE_IMAGE). Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    CameraFile *file;
+    res = gp_camera_file_get(this->_camera, filePath.folder, filePath.name, CameraFileType::GP_FILE_TYPE_NORMAL, file,
+                             this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to get camera file. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    const char *data;
+    unsigned long size;
+    res = gp_file_get_data_and_size(file, &data, &size);
+    if (res != 0) {
+        auto message = fmt::format("Unable to get camera file data and size. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
     }
 
     this->disconnect();
-    return ControllerResponse{};
+    return CameraPreviewResponse{true, "", data, size};
 }
 
 ControllerResponse CameraController::capture_image() {
@@ -254,6 +358,21 @@ ControllerResponse CameraController::capture_image() {
 
     this->disconnect();
     return ControllerResponse{};
+}
+
+ConfigResponse CameraController::get_config_internal(CameraWidget *config, const std::string &name) {
+    CameraWidget *widget;
+    auto res = gp_widget_get_child_by_name(config, name.c_str(), &widget);
+    if (res != 0) {
+        auto message = fmt::format("There are no widgets with the name of '{}'! Result: {}",
+                                   name, gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        return ConfigResponse{false, message};
+    }
+
+    return ConfigResponse{true, "", widget};
 }
 
 

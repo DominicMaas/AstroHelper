@@ -11,10 +11,19 @@ struct ControllerResponse {
     std::string message = "Default Message";
 };
 
+struct ConfigResponse : ControllerResponse {
+    CameraWidget *widget = nullptr;
+};
+
 struct GetConfigResponse : ControllerResponse {
     std::string value;
     std::vector<std::string> values;
-    bool read_only;
+    bool read_only = false;
+};
+
+struct CameraPreviewResponse : ControllerResponse {
+    const char *data = nullptr;
+    unsigned long size = 0;
 };
 
 class CameraController {
@@ -22,16 +31,18 @@ private:
     Camera *_camera = nullptr;
     GPContext *_context = nullptr;
 
+    static ConfigResponse get_config_internal(CameraWidget *config, const std::string &name);
+
 public:
     ControllerResponse connect();
 
     ControllerResponse disconnect();
 
-    ControllerResponse set_config_item(const std::string& name, const std::string &value);
+    ControllerResponse set_config_item(const std::string &name, const std::string &value);
 
-    GetConfigResponse get_config_item(const std::string& name);
+    GetConfigResponse get_config_item(const std::string &name);
 
-    ControllerResponse capture_preview();
+    CameraPreviewResponse capture_preview();
 
     ControllerResponse capture_image();
 };
