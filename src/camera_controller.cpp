@@ -282,7 +282,8 @@ CameraPreviewResponse CameraController::capture_preview() {
     }
 
     // Set the view finder to 0
-    res = gp_widget_set_value(view_finder_widget_res.widget, 0);
+    int val = 0;
+    res = gp_widget_set_value(view_finder_widget_res.widget, &val);
     if (res != 0) {
         auto message = fmt::format("Could not set the view finder to 0");
         fmt::print("{}\n", message);
