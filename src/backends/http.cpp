@@ -38,8 +38,7 @@ HTTP::HTTP(CameraController *controller) {
     this->_server.Get("/capture-preview", [this](const httplib::Request &req, httplib::Response &res) {
         auto response = this->_controller->capture_preview();
         if (response.successful) {
-            // TODO
-            res.set_content("Success!", "text/plain");
+            res.set_content(response.data, "image/jpeg");
         } else {
             res.status = 500;
             res.set_content(response.message, "text/plain");
