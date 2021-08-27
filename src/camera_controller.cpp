@@ -133,24 +133,24 @@ GetConfigResponse CameraController::get_config_item(const std::string &name) {
     // Extract depending on teh type
     switch (type) {
         case CameraWidgetType::GP_WIDGET_RANGE: // FLOAT
-            const float *raw_float;
+            float raw_float;
             res = gp_widget_get_value(widget, &raw_float);
             if (res != 0) {
                 break;
             }
 
-            value = std::to_string(*raw_float);
+            value = std::to_string(raw_float);
             break;
 
         case CameraWidgetType::GP_WIDGET_TOGGLE: // INT
         case CameraWidgetType::GP_WIDGET_DATE:   // INT
-            const int *raw_int;
+            int raw_int;
             res = gp_widget_get_value(widget, &raw_int);
             if (res != 0) {
                 break;
             }
 
-            value = std::to_string(*raw_int);
+            value = std::to_string(raw_int);
             break;
 
         default: // STRING
