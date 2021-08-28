@@ -311,8 +311,8 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    CameraFilePath filePath;
-    res = gp_camera_capture(this->_camera, CameraCaptureType::GP_CAPTURE_IMAGE, &filePath, this->_context);
+    CameraFilePath file_path;
+    res = gp_camera_capture(this->_camera, CameraCaptureType::GP_CAPTURE_IMAGE, &file_path, this->_context);
     if (res != 0) {
         auto message = fmt::format("Unable to capture image (GP_CAPTURE_IMAGE). Result: {}", gp_result_as_string(res));
 
@@ -322,10 +322,12 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
+    fmt::print("Saved file to {} / {} !\n", file_path.folder, file_path.name);
+
     CameraFile *file;
     gp_file_new(&file);
 
-    res = gp_camera_file_get(this->_camera, filePath.folder, filePath.name, CameraFileType::GP_FILE_TYPE_NORMAL, file,
+    res = gp_camera_file_get(this->_camera, file_path.folder, file_path.name, CameraFileType::GP_FILE_TYPE_NORMAL, file,
                              this->_context);
     if (res != 0) {
         auto message = fmt::format("Unable to get camera file. Result: {}", gp_result_as_string(res));
