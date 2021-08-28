@@ -257,17 +257,17 @@ CameraPreviewResponse CameraController::capture_preview() {
     }
 
     // Get the widgets
-    auto capture_target_widget_res = this->get_config_internal(config, "capturetarget");
+    auto capture_target_widget_res = CameraController::get_config_internal(config, "capturetarget");
     if (!capture_target_widget_res.successful) {
         return CameraPreviewResponse{capture_target_widget_res.successful, capture_target_widget_res.message};
     }
 
-    auto view_finder_widget_res = this->get_config_internal(config, "viewfinder");
+    auto view_finder_widget_res = CameraController::get_config_internal(config, "viewfinder");
     if (!view_finder_widget_res.successful) {
         return CameraPreviewResponse{view_finder_widget_res.successful, view_finder_widget_res.message};
     }
 
-    auto image_quality_widget_res = this->get_config_internal(config, "imagequality");
+    auto image_quality_widget_res = CameraController::get_config_internal(config, "imagequality");
     if (!image_quality_widget_res.successful) {
         return CameraPreviewResponse{image_quality_widget_res.successful, image_quality_widget_res.message};
     }
@@ -329,6 +329,8 @@ CameraPreviewResponse CameraController::capture_preview() {
     fmt::print("gp_camera_file_get\n");
 
     CameraFile *file;
+    gp_file_new(&file);
+
     res = gp_camera_file_get(this->_camera, filePath.folder, filePath.name, CameraFileType::GP_FILE_TYPE_NORMAL, file,
                              this->_context);
     if (res != 0) {
@@ -342,9 +344,10 @@ CameraPreviewResponse CameraController::capture_preview() {
 
     fmt::print("gp_file_get_data_and_size\n");
 
-    const char *data;
+    char *data;
     unsigned long size;
-    res = gp_file_get_data_and_size(file, &data, &size);
+
+    res = gp_file_get_data_and_size(file, (const char**)&data, &size);
     if (res != 0) {
         auto message = fmt::format("Unable to get camera file data and size. Result: {}", gp_result_as_string(res));
 

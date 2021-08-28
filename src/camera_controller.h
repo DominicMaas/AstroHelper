@@ -22,7 +22,7 @@ struct GetConfigResponse : ControllerResponse {
 };
 
 struct CameraPreviewResponse : ControllerResponse {
-    const char *data = nullptr;
+    char *data = nullptr;
     unsigned long size = 0;
 };
 
