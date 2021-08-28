@@ -38,11 +38,13 @@ HTTP::HTTP(CameraController *controller) {
     this->_server.Get("/capture-preview", [this](const httplib::Request &req, httplib::Response &res) {
         auto response = this->_controller->capture_preview();
         if (response.successful) {
+            auto size = *response.size;
+            auto data = *response.data;
 
-            fmt::print("[HTTP] Size is {}\n", response.size);
-            fmt::print("[HTTP] Sizeof(data) is {}\n", sizeof(response.data));
+            fmt::print("[HTTP] Size is {}\n", size);
+            fmt::print("[HTTP] Sizeof(data) is {}\n", sizeof(data));
 
-            res.set_content(response.data, "image/jpeg");
+            res.set_content(data, "image/jpeg");
         } else {
             res.status = 500;
             res.set_content(response.message, "text/plain");
