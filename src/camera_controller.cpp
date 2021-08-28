@@ -300,8 +300,6 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    fmt::print("gp_camera_set_config\n");
-
     // Attempt to set the config
     res = gp_camera_set_config(this->_camera, config, this->_context);
     if (res != 0) {
@@ -313,8 +311,6 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    fmt::print("gp_camera_capture\n");
-
     CameraFilePath filePath;
     res = gp_camera_capture(this->_camera, CameraCaptureType::GP_CAPTURE_IMAGE, &filePath, this->_context);
     if (res != 0) {
@@ -325,8 +321,6 @@ CameraPreviewResponse CameraController::capture_preview() {
         this->disconnect();
         return CameraPreviewResponse{false, message};
     }
-
-    fmt::print("gp_camera_file_get\n");
 
     CameraFile *file;
     gp_file_new(&file);
@@ -342,8 +336,6 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    fmt::print("gp_file_get_data_and_size\n");
-
     char *data;
     unsigned long size;
 
@@ -357,11 +349,10 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    fmt::print("Disconnect\n");
+    fmt::print("[Controller] Size is {}\n", size);
+    fmt::print("[Controller] Sizeof(data) is {}\n", sizeof(data));
 
     this->disconnect();
-    fmt::print("Attempt to return data and size\n");
-
     return CameraPreviewResponse{true, "", data, size};
 }
 
