@@ -338,10 +338,10 @@ CameraPreviewResponse CameraController::capture_preview() {
         return CameraPreviewResponse{false, message};
     }
 
-    const char **data;
-    unsigned long int *size;
+    const char *raw_data;
+    unsigned long int size;
 
-    res = gp_file_get_data_and_size(file, data, size);
+    res = gp_file_get_data_and_size(file, &raw_data, &size);
     if (res != 0) {
         auto message = fmt::format("Unable to get camera file data and size. Result: {}", gp_result_as_string(res));
 
@@ -350,9 +350,11 @@ CameraPreviewResponse CameraController::capture_preview() {
         this->disconnect();
         return CameraPreviewResponse{false, message};
     }
+    
+    std::vector<char> data(raw_data, raw_data + size);
 
     this->disconnect();
-    return CameraPreviewResponse{true, "", data, size};
+    return CameraPreviewResponse{true, "", size, data};
 }
 
 ControllerResponse CameraController::capture_image() {

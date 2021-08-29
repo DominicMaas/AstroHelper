@@ -22,8 +22,8 @@ struct GetConfigResponse : ControllerResponse {
 };
 
 struct CameraPreviewResponse : ControllerResponse {
-    const char **data = nullptr;
-    unsigned long int *size = nullptr;
+    unsigned long int size;
+    std::vector<char> data;
 };
 
 class CameraController {

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(ProjectGanymedeServer)
+project(AstroHelperServer)
 
 include(FetchContent)
 
@@ -49,10 +49,10 @@ if (UNIX AND NOT APPLE)
     FetchContent_MakeAvailable(gattlib)
 endif ()
 
-add_executable(ProjectGanymedeServer src/camera_controller.cpp src/backends/http.cpp src/backends/ble.cpp src/main.cpp)
+add_executable(AstroHelperServer src/camera_controller.cpp src/backends/http.cpp src/backends/ble.cpp src/main.cpp)
 
 if (UNIX AND NOT APPLE)
-    target_link_libraries(ProjectGanymedeServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt gattlib)
+    target_link_libraries(AstroHelperServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt gattlib)
 else()
-    target_link_libraries(ProjectGanymedeServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt)
+    target_link_libraries(AstroHelperServer PRIVATE ${Gphoto2_LIBRARIES} nlohmann_json::nlohmann_json httplib fmt)
 endif()
