@@ -14,7 +14,6 @@ This project has been developed on macOS and Linux. Windows is not supported. BL
 
 ## Linux Dependencies
 - `apt install libgphoto2-dev`
-- `apt install protobuf-compiler`
 - `apt install pi-bluetooth`
 - `apt install libbluetooth-dev`
 - `apt install libglib2.0-dev`
