@@ -61,6 +61,8 @@ let loopCount: number = 0;
 
 function NightPage() {
   const classes = useStyles();
+  
+  const [webAddress, setWebAddress] = React.useState<string>("192.168.1.90");
 
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string>();
@@ -86,7 +88,7 @@ function NightPage() {
 
     setLoading(true);
 
-    fetch("http://raspberrypi:8080/set-config-item/iso", {
+    fetch(`http://${webAddress}:8080/set-config-item/iso`, {
       method: "POST",
       body: iso.value,
     })
@@ -104,7 +106,7 @@ function NightPage() {
 
     setLoading(true);
 
-    fetch("http://raspberrypi:8080/set-config-item/shutterspeed", {
+    fetch(`http://${webAddress}:8080/set-config-item/shutterspeed`, {
       method: "POST",
       body: shutterSpeed.value,
     })
@@ -122,7 +124,7 @@ function NightPage() {
 
     setLoading(true);
 
-    fetch("http://raspberrypi:8080/set-config-item/f-number", {
+    fetch(`http://${webAddress}:8080/set-config-item/f-number`, {
       method: "POST",
       body: fStop.value,
     })
@@ -143,7 +145,7 @@ function NightPage() {
   const refresh = () => {
     setLoading(true);
 
-    let a = fetch("http://raspberrypi:8080/get-config-item/iso")
+    let a = fetch(`http://${webAddress}:8080/get-config-item/iso`)
       .then((res) => res.json())
       .then((res) => {
         let iso = new KVPair(res.value, res.choices);
@@ -153,7 +155,7 @@ function NightPage() {
         setError("The camera is not connected, or the device is not on!");
       });
 
-    let b = fetch("http://raspberrypi:8080/get-config-item/shutterspeed")
+    let b = fetch(`http://${webAddress}:8080/get-config-item/shutterspeed`)
       .then((res) => res.json())
       .then((res) => {
         let shutterSpeed = new KVPair(res.value, res.choices);
@@ -163,7 +165,7 @@ function NightPage() {
         setError("The camera is not connected, or the device is not on!");
       });
 
-    let c = fetch("http://raspberrypi:8080/get-config-item/f-number")
+    let c = fetch(`http://${webAddress}:8080/get-config-item/f-number`)
       .then((res) => res.json())
       .then((res) => {
         let fStop = new KVPair(res.value, res.choices);
@@ -173,7 +175,7 @@ function NightPage() {
         setError("The camera is not connected, or the device is not on!");
       });
 
-    let d = fetch("http://raspberrypi:8080/get-config-item/focallength")
+    let d = fetch(`http://${webAddress}:8080/get-config-item/focallength`)
       .then((res) => res.json())
       .then((res) => {
         let focal = parseFloat(res.value);
@@ -213,12 +215,12 @@ function NightPage() {
 
       // Run the call
       try {
-        await fetch("http://raspberrypi:8080/capture-image", {
+        await fetch(`http://${webAddress}:8080/capture-image`, {
           method: "POST",
         });
         setLoading(false);
       } catch (e) {
-        setError(e);
+        setError(String(e));
         setLoading(false);
       }
 
@@ -235,7 +237,7 @@ function NightPage() {
     // This may take some time
     setLoading(true);
 
-    fetch("http://raspberrypi:8080/capture-preview")
+    fetch(`http://${webAddress}:8080/capture-preview`)
       .then((res) => res.blob())
       .then((res) => {
         setLoading(false);
@@ -296,6 +298,16 @@ function NightPage() {
         ) : (
           ""
         )}
+        
+        <FormControl className={classes.formControl} variant="standard">
+          <TextField
+            label="Camera (Server) IP"
+            id="select-web-address"
+            value={webAddress}
+            onChange={(v) => setWebAddress(v.target.value as string)}
+          />
+          <FormHelperText>The IP address of the device connected to the camera</FormHelperText>
+        </FormControl>
 
         <FormControl className={classes.formControl} variant="standard">
           <InputLabel id="select-iso-label">ISO</InputLabel>

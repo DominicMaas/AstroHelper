@@ -2,6 +2,10 @@
 
 HTTP::HTTP(CameraController *controller) {
     this->_controller = controller;
+    
+    this->_server.set_post_routing_handler([](const auto& req, auto& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+    });
 
     // Setup HTTP Bindings
     this->_server.Get("/get-config-item/(.+)", [this](const httplib::Request &req, httplib::Response &res) {
