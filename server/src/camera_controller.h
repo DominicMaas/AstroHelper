@@ -30,6 +30,8 @@ class CameraController {
 private:
     Camera *_camera = nullptr;
     GPContext *_context = nullptr;
+    
+    std::mutex _lock;
 
     static ConfigResponse get_config_internal(CameraWidget *config, const std::string &name);
 
