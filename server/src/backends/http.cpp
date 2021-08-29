@@ -26,7 +26,7 @@ HTTP::HTTP(CameraController *controller) {
         }
     });
 
-    this->_server.Get("/set-config-item/(.+)", [this](const httplib::Request &req, httplib::Response &res) {
+    this->_server.Post("/set-config-item/(.+)", [this](const httplib::Request &req, httplib::Response &res) {
         // Extract name and try extract config
         auto configName = req.matches[1].str();
         auto response = this->_controller->set_config_item(configName, req.body);
@@ -53,7 +53,7 @@ HTTP::HTTP(CameraController *controller) {
         }
     });
 
-    this->_server.Get("/capture-image", [this](const httplib::Request &req, httplib::Response &res) {
+    this->_server.Post("/capture-image", [this](const httplib::Request &req, httplib::Response &res) {
         auto response = this->_controller->capture_image();
         if (response.successful) {
             // TODO
