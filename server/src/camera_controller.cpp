@@ -380,6 +380,89 @@ ControllerResponse CameraController::capture_image() {
         return ControllerResponse{false, conn_response.message};
     }
 
+    // Keep track of return codes
+    int res;
+
+    // Get the config
+    CameraWidget *config;
+    res = gp_camera_get_config(this->_camera, &config, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to get camera config. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Get the widgets
+    auto capture_target_widget_res = CameraController::get_config_internal(config, "capturetarget");
+    if (!capture_target_widget_res.successful) {
+        return CameraPreviewResponse{capture_target_widget_res.successful, capture_target_widget_res.message};
+    }
+
+    auto view_finder_widget_res = CameraController::get_config_internal(config, "viewfinder");
+    if (!view_finder_widget_res.successful) {
+        return CameraPreviewResponse{view_finder_widget_res.successful, view_finder_widget_res.message};
+    }
+
+    auto image_quality_widget_res = CameraController::get_config_internal(config, "imagequality");
+    if (!image_quality_widget_res.successful) {
+        return CameraPreviewResponse{image_quality_widget_res.successful, image_quality_widget_res.message};
+    }
+    
+    // Set the Capture Target to 'Memory card'
+    res = gp_widget_set_value(capture_target_widget_res.widget, "Memory card");
+    if (res != 0) {
+        auto message = fmt::format("Could not set the capture target to Memory card");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Set the view finder to 0 (in case it it 1 from the capture preview)
+    int val = 0;
+    res = gp_widget_set_value(view_finder_widget_res.widget, &val);
+    if (res != 0) {
+        auto message = fmt::format("Could not set the view finder to 0");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Set the image format to 'NEF (Raw)'
+    res = gp_widget_set_value(image_quality_widget_res.widget, "NEF (Raw)");
+    if (res != 0) {
+        auto message = fmt::format("Could not set the image quality to NEF (Raw)");
+        fmt::print("{}\n", message);
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    // Attempt to set the config
+    res = gp_camera_set_config(this->_camera, config, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to set camera config. Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+    
+    CameraFilePath file_path;
+    res = gp_camera_capture(this->_camera, CameraCaptureType::GP_CAPTURE_IMAGE, &file_path, this->_context);
+    if (res != 0) {
+        auto message = fmt::format("Unable to capture image (GP_CAPTURE_IMAGE). Result: {}", gp_result_as_string(res));
+
+        fmt::print("{}\n", message);
+
+        this->disconnect();
+        return CameraPreviewResponse{false, message};
+    }
+
+    fmt::print("Saved file to {} / {} !\n", file_path.folder, file_path.name);
+
     return ControllerResponse{};
 }
 
