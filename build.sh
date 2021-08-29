@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Set correct location
+cd server
+
 mkdir build
 cd build
 
