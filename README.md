@@ -30,7 +30,7 @@ be accessed remotely.
 
 # Tasks
 
-- [ ] Replicate old ganymede server functionality (backend and web server) to match old feature set
-- [ ] Port ganymeded react frontend to the new server. Merge repos together deleting the old python server
+- [x] Replicate old ganymede server functionality (backend and web server) to match old feature set
+- [x] Port ganymeded react frontend to the new server. Merge repos together deleting the old python server
 - [ ] Create a Flutter app which talks to the server via HTTP
 - [ ] Implement the BLE server within the controller, and BLE client within the app
