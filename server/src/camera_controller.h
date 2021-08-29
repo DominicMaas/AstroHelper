@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <mutex>
 #include <fmt/core.h>
 #include <gphoto2/gphoto2-camera.h>
 #include <gphoto2/gphoto2-result.h>
