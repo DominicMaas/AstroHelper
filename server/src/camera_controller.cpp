@@ -6,7 +6,7 @@ ControllerResponse CameraController::connect() {
         this->_context = gp_context_new();
     }
     
-    if (this->_camera != nullptr) {
+    if (this->_camera == nullptr) {
         // Attempt to init the camera
         gp_camera_new(&this->_camera);
         int init_res = gp_camera_init(this->_camera, this->_context);
