@@ -34,3 +34,29 @@ be accessed remotely.
 - [x] Port ganymeded react frontend to the new server. Merge repos together deleting the old python server
 - [ ] Create a Flutter app which talks to the server via HTTP
 - [ ] Implement the BLE server within the controller, and BLE client within the app
+
+# Setup
+
+https://unix.stackexchange.com/questions/56957/how-to-start-an-application-automatically-on-boot
+
+`sudo nano /etc/systemd/system/astrohelper.service`
+
+```
+[Unit]
+Description=AstroHelper Camera Service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/Ganymede-Server/server/build
+ExecStart=/home/ubuntu/Ganymede-Server/server/build/AstroHelperServer
+
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- `sudo systemctl enable astrohelper`
+- `sudo systemctl start astrohelper`
+- `sudo systemctl status astrohelper`
