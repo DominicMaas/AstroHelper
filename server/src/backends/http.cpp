@@ -7,6 +7,8 @@ HTTP::HTTP(CameraController *controller) {
         res.set_header("Access-Control-Allow-Origin", "*");
     });
 
+    this->_server.set_mount_point("/", "../../client/build");
+
     // Setup HTTP Bindings
     this->_server.Get("/get-config-item/(.+)", [this](const httplib::Request &req, httplib::Response &res) {
         // Extract name and try extract config
