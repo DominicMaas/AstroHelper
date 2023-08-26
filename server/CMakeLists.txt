@@ -15,8 +15,8 @@ add_definitions(${Gphoto2_DEFINITIONS})
 # ----- cpp-httplib ----- #
 FetchContent_Declare(
         httplib
-        GIT_REPOSITORY "https://github.com/yhirose/cpp-httplib"
-        GIT_TAG "429750092850b18abeccb7bd390e9fb88baf2b1b"
+        GIT_REPOSITORY https://github.com/yhirose/cpp-httplib
+        GIT_TAG v0.14.0
 )
 FetchContent_MakeAvailable(httplib)
 
@@ -24,13 +24,14 @@ FetchContent_MakeAvailable(httplib)
 FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG d141cdbeb0fb422a3fb7173b285fd38e0d1772dc)
+        GIT_TAG 10.1.0)
 FetchContent_MakeAvailable(fmt)
 
 # ----- JSON ----- #
-FetchContent_Declare(json
-        GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent.git
-        GIT_TAG v3.10.0)
+FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/nlohmann_json_cmake_fetchcontent
+        GIT_TAG v3.11.2)
 
 FetchContent_GetProperties(json)
 if(NOT json_POPULATED)
@@ -45,7 +46,7 @@ if (UNIX AND NOT APPLE)
     FetchContent_Declare(
             gattlib
             GIT_REPOSITORY https://github.com/labapart/gattlib
-            GIT_TAG db44d7a99df3e7f71fb71b9431df6201a92d9edf)
+            GIT_TAG 33a8a275928b186381bb0aea0f9778e330e57ec3)
     FetchContent_MakeAvailable(gattlib)
 endif ()
 
