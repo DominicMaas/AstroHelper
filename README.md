@@ -1,62 +1,27 @@
-# Introduction
+# Astro Helper
 
-Exposes a gphoto2 connection over network via BLE or HTTP. Useful for running on a raspberry pi to control 
-cameras remotely via other devices (such as a mobile phone)
+Astro helper is a Raspberry Pi peripheral and Flutter Mobile app that work together to expose functions from a DLSR to a mobile device over BLE.
 
-# Requirements
+It's aim is to help in astrophotograpy configuration and capture without needing to touch the camera (or be connected to any networks)
 
-This project has been developed on macOS and Linux. Windows is not supported. BLE is only supported on Linux.
+## Building
 
-## macOS Dependencies
+### Application (via Windows)
 
-- `brew install libgphoto2`
-- `brew install protobuf`
+- `cross build`
+- `scp .\target\aarch64-unknown-linux-gnu\debug\astro_server astro@192.168.1.88:/home/astro`
 
-## Linux Dependencies
-- `apt install libgphoto2-dev`
-- `apt install pi-bluetooth`
-- `apt install libbluetooth-dev`
-- `apt install libglib2.0-dev`
-- `apt install libssl-dev`
+### Library
 
-# Structure 
+- `cargo build --release`
 
-The ganymede server supports operating in two modes, as a bluetooth peripheral (via BLE) and as an HTTP Server. 
-Camera functionality is abstracted behind the `CameraController` class. Methods take in simple strings as input data, 
-and expose output data in form of protobuf objects.
+## BLE Service
 
-The BLE Server and HTTP Server then abstract over this `CameraController` class exposing the methods as endpoints that can 
-be accessed remotely.
+The Astro Helper peripheral exposes a few services.
 
-# Tasks
+### Battery Service
+**UUID:** 0x0000180F_0000_1000_8000_00805f9b34fb
 
-- [x] Replicate old ganymede server functionality (backend and web server) to match old feature set
-- [x] Port ganymeded react frontend to the new server. Merge repos together deleting the old python server
-- [ ] Create a Flutter app which talks to the server via HTTP
-- [ ] Implement the BLE server within the controller, and BLE client within the app
+### Configuration Service
 
-# Setup
-
-https://unix.stackexchange.com/questions/56957/how-to-start-an-application-automatically-on-boot
-
-`sudo nano /etc/systemd/system/astrohelper.service`
-
-```
-[Unit]
-Description=AstroHelper Camera Service
-
-[Service]
-Type=simple
-WorkingDirectory=/home/ubuntu/Ganymede-Server/server/build
-ExecStart=/home/ubuntu/Ganymede-Server/server/build/AstroHelperServer
-
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-- `sudo systemctl enable astrohelper`
-- `sudo systemctl start astrohelper`
-- `sudo systemctl status astrohelper`
+**UUID:** 0x6C7028E2_DC4A_11EF_9134_75E88A34574D

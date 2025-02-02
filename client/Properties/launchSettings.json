@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AstroClient (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "AstroClient (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
